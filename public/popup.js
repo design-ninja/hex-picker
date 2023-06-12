@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const resultList = document.getElementById("result");
 
     const GiveMetheChild = (color, msg) => {
-        const errorLabel = document.createElement("p")
+        const errorLabel = document.createElement("div")
         errorLabel.setAttribute("class", "errorLabel")
         errorLabel.style.backgroundColor = color
         errorLabel.innerText = msg
@@ -19,10 +19,10 @@ window.addEventListener('DOMContentLoaded', () => {
         const tab = tabs[0]
 
         if (tab.url === undefined || tab.url.indexOf('chrome') == 0) {
-            buttonCont.innerHTML = 'ColorPicker can\'t access <i>Chrome pages</i>'
+            buttonCont.innerHTML = '<i>ColorPicker can\'t access Chrome pages</i>'
         }
         else if (tab.url.indexOf('file') === 0) {
-            buttonCont.innerHTML = 'ColorPicker can\'t access <i>local pages</i>'
+            buttonCont.innerHTML = '<i>ColorPicker can\'t access local pages</i>'
         } else {
             const button = document.createElement("button")
             button.setAttribute("id", "picker_btn")
