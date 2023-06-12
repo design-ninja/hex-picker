@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                 // Copy the color to the clipboard
                 navigator.clipboard.writeText(color).then(function() {
                     // Success feedback
-                    alert(`Color ${color} copied to clipboard`);
+                    // alert(`Color ${color} copied to clipboard`);
                 }, function(err) {
                     // Handle errors
                     console.error('Could not copy color: ', err);
@@ -20,11 +20,11 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 
                 chrome.storage.local.get("color_hex_code", (resp) => {
                     if (resp.color_hex_code && resp.color_hex_code.length > 0) {
-                        resp.color_hex_code.unshift(color); // новый цвет вставляется в начало массива
-                        chrome.storage.local.set({ "color_hex_code": resp.color_hex_code }) // сохраняем обновленный массив
+                        resp.color_hex_code.unshift(color);
+                        chrome.storage.local.set({ "color_hex_code": resp.color_hex_code })
                     }
                     else {
-                        chrome.storage.local.set({ "color_hex_code": [color] }) // если нет сохраненных цветов, создаем новый массив
+                        chrome.storage.local.set({ "color_hex_code": [color] })
                     }
                 })
             }).catch(e => {

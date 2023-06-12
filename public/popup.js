@@ -67,9 +67,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 liElem.innerText = hexCode
                 liElem.style.backgroundColor = hexCode
                 if (isLightColor(hexCode)) {
-                    liElem.style.color = '#000';
+                    liElem.style.color = 'rgba(0, 0, 0, 0.6)';
                 } else {
-                    liElem.style.color = '#fff';
+                    liElem.style.color = 'rgba(255, 255, 255, 0.7)';
                 }
                 liElem.addEventListener("click", () => {
                     navigator.clipboard.writeText(hexCode);
