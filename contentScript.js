@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                 // Copy the color to the clipboard
                 navigator.clipboard.writeText(color).then(function() {
                     // Success feedback
-                    alert(`Color ${color} copied to clipboard`);
+                    console.log('Color copied to clipboard successfully!');
                 }, function(err) {
                     // Handle errors
                     console.error('Could not copy color: ', err);
@@ -26,6 +26,8 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                     else {
                         chrome.storage.local.set({ "color_hex_code": [color] })
                     }
+                    // Send a message to the background script to change the badge color
+                    chrome.runtime.sendMessage({color: color});
                 })
             }).catch(e => {
                 console.log(e)
