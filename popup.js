@@ -31,6 +31,22 @@ window.addEventListener('DOMContentLoaded', () => {
         return brightness > 128;
     };
 
+    function createColorElement(hexCode) {
+        const liElem = document.createElement("span");
+        liElem.innerText = hexCode;
+        liElem.style.backgroundColor = hexCode;
+        if (isLightColor(hexCode)) {
+            liElem.style.color = 'rgba(0, 0, 0, 0.6)';
+        } else {
+            liElem.style.color = 'rgba(255, 255, 255, 0.7)';
+        }
+        liElem.addEventListener("click", () => {
+            navigator.clipboard.writeText(hexCode);
+            GiveMetheChild("#FEF2CE", "Hex code is copied to clipboard!");
+        })
+        return liElem;
+    }
+
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         const tab = tabs[0];
 
@@ -66,18 +82,7 @@ window.addEventListener('DOMContentLoaded', () => {
             resultList.innerHTML = '';  
             if (resp.color_hex_code && resp.color_hex_code.length > 0) {
                 resp.color_hex_code.reverse().forEach(hexCode => {
-                    const liElem = document.createElement("span");
-                    liElem.innerText = hexCode;
-                    liElem.style.backgroundColor = hexCode;
-                    if (isLightColor(hexCode)) {
-                        liElem.style.color = 'rgba(0, 0, 0, 0.6)';
-                    } else {
-                        liElem.style.color = 'rgba(255, 255, 255, 0.7)';
-                    }
-                    liElem.addEventListener("click", () => {
-                        navigator.clipboard.writeText(hexCode);
-                        GiveMetheChild("#FEF2CE", "Hex code is copied to clipboard!");
-                    })
+                    const liElem = createColorElement(hexCode);
                     resultList.prepend(liElem);
                 });
                 // Show the result block when there are colors
@@ -103,36 +108,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    chrome.storage.local.get("color_hex_code", (resp) => {
-        if (resp.color_hex_code && resp.color_hex_code.length > 0) {
-            resp.color_hex_code.reverse().forEach(hexCode => {
-                const liElem = document.createElement("span");
-                liElem.innerText = hexCode;
-                liElem.style.backgroundColor = hexCode;
-                if (isLightColor(hexCode)) {
-                    liElem.style.color = 'rgba(0, 0, 0, 0.6)';
-                } else {
-                    liElem.style.color = 'rgba(255, 255, 255, 0.7)';
-                }
-                liElem.addEventListener("click", () => {
-                    navigator.clipboard.writeText(hexCode);
-                    GiveMetheChild("#FEF2CE", "Hex code is copied to clipboard!");
-                })
-                resultList.prepend(liElem);
-            });
-
-            ClearButton = document.createElement("button");
-            ClearButton.innerText = "Clear colors";
-            ClearButton.setAttribute("id", "ClearButton");
-            ClearButton.addEventListener("click", () => {
-                chrome.storage.local.remove("color_hex_code", refreshPopup);
-                // Send a message to clear the badge
-                chrome.runtime.sendMessage({query: "clear_badge"});
-            });
-            mainCont.appendChild(ClearButton);
-        }
-    });
 
     refreshPopup();
 });
