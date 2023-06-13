@@ -1,7 +1,3 @@
-console.log("content script injected")
-
-// Functions
-
 const GiveMetheChild = (color, msg) => {
     const errorLabel = document.createElement("div");
     errorLabel.setAttribute("class", "errorLabel");
@@ -43,7 +39,7 @@ const storeColor = (color) => {
 
 // Event handlers
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message) => {
     if (message.from === "popup" && message.query === "eye_dropper_clicked") {
 
         setTimeout(() => {
