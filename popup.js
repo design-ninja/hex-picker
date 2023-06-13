@@ -1,41 +1,3 @@
-console.log("content script injected")
-
-chrome.runtime.onMessage.addListener((message, sender) => {
-    if (message.from === "popup" && message.query === "eye_dropper_clicked") {
-
-        setTimeout(() => {
-
-            const eyeDropper = new EyeDropper();
-
-            eyeDropper.open().then(result => {
-                const color = result.sRGBHex;
-                // Copy the color to the clipboard
-                navigator.clipboard.writeText(color).then(function() {
-                    // Success feedback
-                    alert(`Color ${color} copied to clipboard`);
-                }, function(err) {
-                    // Handle errors
-                    console.error('Could not copy color: ', err);
-                });
-
-                chrome.storage.local.get("color_hex_code", (resp) => {
-                    if (resp.color_hex_code && resp.color_hex_code.length > 0) {
-                        resp.color_hex_code.unshift(color);
-                        chrome.storage.local.set({ "color_hex_code": resp.color_hex_code })
-                    }
-                    else {
-                        chrome.storage.local.set({ "color_hex_code": [color] })
-                    }
-                })
-            }).catch(e => {
-                console.log(e)
-            })
-        }, 500);
-    }
-})
-
---
-
 window.addEventListener('DOMContentLoaded', () => {
     const mainCont = document.getElementById("mainCont");
     const buttonCont = document.getElementById("picker_btn_cont");
@@ -71,7 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         const tab = tabs[0]
 
-        if (tab.url === undefined || tab.url.indexOf('chrome') == 0) {
+        if (tab.url === undefined || tab.url.indexOf('chrome') === 0) {
             buttonCont.innerHTML = '<i>ColorPicker can\'t access Chrome pages</i>'
         }
         else if (tab.url.indexOf('file') === 0) {
@@ -105,9 +67,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 liElem.innerText = hexCode
                 liElem.style.backgroundColor = hexCode
                 if (isLightColor(hexCode)) {
-                    liElem.style.color = '#000';
+                    liElem.style.color = 'rgba(0, 0, 0, 0.6)';
                 } else {
-                    liElem.style.color = '#fff';
+                    liElem.style.color = 'rgba(255, 255, 255, 0.7)';
                 }
                 liElem.addEventListener("click", () => {
                     navigator.clipboard.writeText(hexCode);
