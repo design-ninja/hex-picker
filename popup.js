@@ -112,6 +112,8 @@ window.addEventListener('DOMContentLoaded', () => {
             ClearButton.setAttribute("id", "ClearButton");
             ClearButton.addEventListener("click", () => {
                 chrome.storage.local.remove("color_hex_code", refreshPopup);
+                // Send a message to clear the badge
+                chrome.runtime.sendMessage({query: "clear_badge"});
             });
             mainCont.appendChild(ClearButton);
         }
