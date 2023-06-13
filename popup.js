@@ -79,8 +79,23 @@ window.addEventListener('DOMContentLoaded', () => {
                         GiveMetheChild("#FEF2CE", "Hex code is copied to clipboard!");
                     })
                     resultList.prepend(liElem);
-                })
+                });
+                // Show the result block when there are colors
+                resultList.style.display = "flex";
+                if (!ClearButton) {
+                    ClearButton = document.createElement("button");
+                    ClearButton.innerText = "Clear colors";
+                    ClearButton.setAttribute("id", "ClearButton");
+                    ClearButton.addEventListener("click", () => {
+                        chrome.storage.local.remove("color_hex_code", refreshPopup);
+                        // Send a message to clear the badge
+                        chrome.runtime.sendMessage({query: "clear_badge"});
+                    });
+                    mainCont.appendChild(ClearButton);
+                }
             } else {
+                // Hide the result block when there are no colors
+                resultList.style.display = "none";
                 if (ClearButton) {
                     mainCont.removeChild(ClearButton);
                     ClearButton = null;
@@ -118,4 +133,6 @@ window.addEventListener('DOMContentLoaded', () => {
             mainCont.appendChild(ClearButton);
         }
     });
+
+    refreshPopup();
 });
