@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
                 // Copy the color to the clipboard
                 navigator.clipboard.writeText(color).then(function() {
                     // Success feedback
-                    // alert(`Color ${color} copied to clipboard`);
+                    alert(`Color ${color} copied to clipboard`);
                 }, function(err) {
                     // Handle errors
                     console.error('Could not copy color: ', err);
