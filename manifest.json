@@ -1,5 +1,5 @@
 {
-    "name": "#hexPicker",
+    "name": "#hexPicker — A Simple HEX Color Picker",
     "description": "Effortlessly pick, copy, and save colors in hex format with a single click.",
     "version": "0.1",
     "manifest_version": 3,
