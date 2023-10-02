@@ -1,38 +1,55 @@
-const GiveMetheChild = (color, msg) => {
+const GiveMetheChild = (color, msg, mainCont) => {
     const errorLabel = document.createElement("div");
     errorLabel.setAttribute("class", "errorLabel");
     errorLabel.style.backgroundColor = color;
     errorLabel.innerText = msg;
-
     mainCont.appendChild(errorLabel);
-    setTimeout(() => {
-        mainCont.removeChild(errorLabel);
-    }, 2000);
-}
-
-function hexToRgb(hex) {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+    setTimeout(() => mainCont.removeChild(errorLabel), 2000);
 };
 
-function isLightColor(color) {
-    const rgb = hexToRgb(color);
-    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return null;
+    const [, r, g, b] = result;
+    return { r: parseInt(r, 16), g: parseInt(g, 16), b: parseInt(b, 16) };
+};
+
+const isLightColor = (color) => {
+    const { r, g, b } = hexToRgb(color) || {};
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
     return brightness > 128;
+};
+
+const createPickColorButton = (tab, mainCont) => {
+    const button = document.createElement("button");
+    button.setAttribute("id", "picker_btn");
+    button.innerText = "Pick a color";
+
+    button.addEventListener("click", () => {
+        if (!window.EyeDropper) {
+            GiveMetheChild("#FEF2CE", 'Your browser does not support the ColorPicker API', mainCont);
+            return;
+        }
+        chrome.tabs.sendMessage(
+            tab.id,
+            { from: "popup", query: "eye_dropper_clicked" }
+        );
+        window.close();
+    });
+
+    return button;
 };
 
 const storeColor = (color) => {
     chrome.storage.local.get("color_hex_code", (resp) => {
         if (resp.color_hex_code && resp.color_hex_code.length > 0) {
             resp.color_hex_code.unshift(color);
-            chrome.storage.local.set({ "color_hex_code": resp.color_hex_code });
         } else {
-            chrome.storage.local.set({ "color_hex_code": [color] });
+            resp.color_hex_code = [color];
         }
+        chrome.storage.local.set({ "color_hex_code": resp.color_hex_code }, () => {
+            refreshPopup();
+        });
         chrome.runtime.sendMessage({ color: color });
     });
 }
@@ -76,31 +93,16 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         else if (tab.url.indexOf('file') === 0) {
             buttonCont.innerHTML = '<i>ColorPicker can\'t access local pages</i>';
-        } else {
-            const button = document.createElement("button");
-            button.setAttribute("id", "picker_btn");
-            button.innerText = "Pick a color";
-
-            button.addEventListener("click", () => {
-                if (!window.EyeDropper) {
-                    GiveMetheChild("#FEF2CE", 'Your browser does not support the ColorPicker API');
-                    return;
-                }
-
-                chrome.tabs.sendMessage(
-                    tabs[0].id,
-                    { from: "popup", query: "eye_dropper_clicked" }
-                );
-                window.close();
-            });
-
+        }
+        else {
+            const button = createPickColorButton(tab, mainCont);
             buttonCont.appendChild(button);
         }
     });
 
     chrome.storage.local.get("color_hex_code", (resp) => {
         if (resp.color_hex_code && resp.color_hex_code.length > 0) {
-            resp.color_hex_code.reverse().forEach(hexCode => {
+            resp.color_hex_code.forEach(hexCode => {
                 const liElem = document.createElement("span");
                 liElem.innerText = hexCode;
                 liElem.style.backgroundColor = hexCode;
