@@ -20,6 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     menuDropdown.innerHTML = `
         <div id="clearColors" class="menu-item">Clear colors</div>
         <div id="leaveReview" class="menu-item">Leave your review</div>
+        <div id="buyMeACoffee" class="menu-item">Buy me a coffee ☕️</div>
     `;
 
     document.getElementById('header').appendChild(menuDropdown);
@@ -35,6 +36,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('leaveReview').addEventListener('click', () => {
         window.open('https://chrome.google.com/webstore/detail/hexpicker-%E2%80%94-a-simple-hex/nbfoiiglmnkmdhhaenkekmodabpcfnhc?utm_source=ext_sidebar&hl=en-GB', '_blank');
+        menuDropdown.classList.remove('show');
+    });
+
+    document.getElementById('buyMeACoffee').addEventListener('click', () => {
+        window.open('https://www.buymeacoffee.com/design_ninja', '_blank');
         menuDropdown.classList.remove('show');
     });
 
@@ -136,7 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
     function refreshPopup() {
         chrome.storage.local.get("color_hex_code", (resp) => {
             resultList.innerHTML = '';
-    
+
             // Remove existing buttons if any
             const toggleButton = document.getElementById("toggleButton");
             if (toggleButton) {
@@ -146,7 +152,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 mainCont.removeChild(ClearButton);
                 ClearButton = null;
             }
-    
+
             // Logic to handle 'Show more/Show less' button
             if (resp.color_hex_code && resp.color_hex_code.length > 9) {
                 const toggleButton = document.createElement("button");
@@ -156,7 +162,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 toggleButton.addEventListener("click", toggleView);
                 mainCont.appendChild(toggleButton);
             }
-    
+
             // Logic to handle 'Clear colors' button and color elements
             if (resp.color_hex_code && resp.color_hex_code.length > 0) {
                 resp.color_hex_code.forEach((hexCode, index) => {
